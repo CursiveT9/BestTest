@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<div class="d-flex flex-column min-vh-100">
+    <header th:replace="~{fragments/header}"></header>
+    <div class="container">
+        <h1 style="margin-top: 70px; margin-bottom: 50px;" class="custom-margin-top"></h1>
+        <h2>Пользователи:</h2>
+        <div th:replace="~{fragments/userDetails :: userDetailsFragment}"></div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer}"></div>
+</body>
+</html>
