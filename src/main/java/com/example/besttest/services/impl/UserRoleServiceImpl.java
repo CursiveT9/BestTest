@@ -1,6 +1,6 @@
 package com.example.besttest.services.impl;
 
-import com.example.besttest.dtos.input.UserRoleDTO;
+import com.example.besttest.dtos.UserRoleDTO;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.UserRole;
 import com.example.besttest.repositories.UserRoleRepository;

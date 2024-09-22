@@ -1,7 +1,6 @@
 package com.example.besttest.services.impl;
 
 import com.example.besttest.dtos.UserDTO;
-import com.example.besttest.dtos.output.UserOutputDTO;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.User;
 import com.example.besttest.models.entities.UserRole;
@@ -13,7 +12,6 @@ import com.example.besttest.services.internal.InternalUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,14 +25,12 @@ public class UserServiceImpl implements UserService, InternalUserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final InternalRoleService internalRoleService;
-//    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRoleRepository userRoleRepository, UserRepository userRepository, ModelMapper modelMapper, InternalRoleService internalRoleService) {
         this.userRoleRepository = userRoleRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.internalRoleService = internalRoleService;
-//        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -46,7 +42,6 @@ public class UserServiceImpl implements UserService, InternalUserService {
                 .orElseThrow(() -> new EntityNotFoundException("User role not found: " + userDTO.getRole()));
         user.setRole(userRole);
         user.setPassword(userDTO.getPassword());
-//        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDTO.class);
     }
@@ -94,33 +89,18 @@ public class UserServiceImpl implements UserService, InternalUserService {
     @Override
     public UserDTO getUserByUsername(String username) {
         Optional user = userRepository.findByUsername(username);
-//        if (user == null) {
-//            throw new UserNotFoundException(username);
-//        }
         return modelMapper.map(user, UserDTO.class);
     }
 
     @Override
     public UserDTO getUserDTOById(String id) {
         Optional<User> user = userRepository.findById(id);
-//                .orElseThrow(() -> new UserNotFoundException(id));
         return modelMapper.map(user, UserDTO.class);
-    }
-
-    @Override
-    public List<UserOutputDTO> getUserOutputDTO() {
-        return List.of();
-    }
-
-    @Override
-    public UserOutputDTO getUserOutputDTOById(String id) {
-        return null;
     }
 
     @Override
     public User getUserById(String userId) {
         Optional<User> user = userRepository.findById(userId);
-//                .orElseThrow(() -> new UserNotFoundException(userId));
         return user.orElse(null);
     }
 
@@ -129,7 +109,7 @@ public class UserServiceImpl implements UserService, InternalUserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         UserRole userRole = userRoleRepository.findByRole(userDTO.getRole())
-                .orElseThrow(() -> new EntityNotFoundException("CarModel not found: " + userDTO.getRole()));
+                .orElseThrow(() -> new EntityNotFoundException("Role not found: " + userDTO.getRole()));
         existingUser.setRole(userRole);
         existingUser.setActive(userDTO.getActive());
         existingUser.setUsername(userDTO.getUsername());

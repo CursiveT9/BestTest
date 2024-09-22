@@ -13,19 +13,19 @@ public class Testing extends TimestampedEntity {
     @ManyToOne
     @JoinColumn(name = "creator_id", nullable = false)
     private User user;
-    private AccessLevel visibility;
+    private AccessLevel accessLevel;
     private String testContentUrl;
     private int points;
     @ManyToOne
     @JoinColumn(name = "article_id")
     private Article article;
 
-    public Testing(String title, String description, User user, String content, AccessLevel visibility, int points, Article article) {
+    public Testing(String title, String description, User user, String content, AccessLevel accessLevel, int points, Article article) {
         this.title = title;
         this.description = description;
         this.user = user;
         this.testContentUrl = content;
-        this.visibility = visibility;
+        this.accessLevel = accessLevel;
         this.points = points;
         this.article = article;
     }
@@ -45,8 +45,8 @@ public class Testing extends TimestampedEntity {
     public void setContent(String content) {
         this.testContentUrl = content;
     }
-    public void setVisibility(AccessLevel visibility) {
-        this.visibility = visibility;
+    public void setAccessLevel(AccessLevel accessLevel) {
+        this.accessLevel = accessLevel;
     }
     public void setPoints(int points) {
         this.points = points;
@@ -72,8 +72,8 @@ public class Testing extends TimestampedEntity {
     }
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "access_level", length = 9, nullable = false)
-    public AccessLevel getVisibility() {
-        return visibility;
+    public AccessLevel getAccessLevel() {
+        return accessLevel;
     }
     public User getUser() {
         return user;

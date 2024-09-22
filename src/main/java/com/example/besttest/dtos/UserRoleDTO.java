@@ -1,4 +1,4 @@
-package com.example.besttest.dtos.input;
+package com.example.besttest.dtos;
 
 import com.example.besttest.enums.UserRoleType;
 import jakarta.validation.constraints.NotNull;

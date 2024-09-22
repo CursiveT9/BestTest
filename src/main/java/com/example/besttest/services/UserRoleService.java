@@ -1,7 +1,7 @@
 package com.example.besttest.services;
 
 
-import com.example.besttest.dtos.input.UserRoleDTO;
+import com.example.besttest.dtos.UserRoleDTO;
 
 import java.util.List;
 

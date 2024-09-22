@@ -2,8 +2,7 @@ package com.example.besttest.enums;
 
 public enum AccessLevel {
     OPEN(1),
-    RESTRICTED(2),
-    PRIVATE(3);
+    PRIVATE(2);
 
     private final int accessLevelTypeCode;
 

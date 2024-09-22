@@ -1,7 +1,7 @@
 package com.example.besttest.init;
 
 import com.example.besttest.dtos.UserDTO;
-import com.example.besttest.dtos.input.UserRoleDTO;
+import com.example.besttest.dtos.UserRoleDTO;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.User;
 import com.example.besttest.services.UserRoleService;
@@ -81,7 +81,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        createData();
+//        createData();
 
     }
 }

@@ -3,13 +3,14 @@ package com.example.besttest.controllers.rest;
 import com.example.besttest.dtos.UserDTO;
 import com.example.besttest.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.besttest.dtos.Action;
 import java.util.List;
 import java.util.stream.Collectors;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,58 +23,58 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Метод для создания пользователя с ссылкой на самого себя
     @PostMapping
-    public EntityModel<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         UserDTO createdUser = userService.createUser(userDTO);
-
-        // Создаем ссылку на только что созданного пользователя
-        Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUserById(createdUser.getId())).withSelfRel();
-
-        return EntityModel.of(createdUser, selfLink);
+        createdUser = createLinks(createdUser);
+        return ResponseEntity.ok(createdUser);
     }
 
-    // Метод для получения пользователя по ID
     @GetMapping("/{id}")
-    public EntityModel<UserDTO> getUserById(@PathVariable String id) {
+    public ResponseEntity<UserDTO> getUserById (@PathVariable String id) {
         UserDTO userDTO = userService.getUserDTOById(id);
-
-        // Создаем ссылку на самого себя
-        Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUserById(id)).withSelfRel();
-
-        // Добавляем дополнительные ссылки на другие методы
-        Link allUsersLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getAllUsers()).withRel("allUsers");
-
-        return EntityModel.of(userDTO, selfLink, allUsersLink);
+        userDTO = createLinks(userDTO);
+        return ResponseEntity.ok(userDTO);
     }
 
-    // Метод для получения всех пользователей
     @GetMapping
-    public List<EntityModel<UserDTO>> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
-
         return users.stream()
-                .map(user -> {
-                    Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUserById(user.getId())).withSelfRel();
-                    return EntityModel.of(user, selfLink);
+                .peek(user -> {
+                    user = createLinks(user);
                 })
                 .collect(Collectors.toList());
     }
 
-    // Метод для обновления пользователя
     @PutMapping("/{id}")
-    public EntityModel<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO userDTO) {
         UserDTO updatedUser = userService.editUser(id, userDTO);
-
-        // Создаем ссылку на обновленного пользователя
-        Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUserById(updatedUser.getId())).withSelfRel();
-
-        return EntityModel.of(updatedUser, selfLink);
+        updatedUser = createLinks(updatedUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
-    // Метод для удаления пользователя
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build(); // Возвращаем статус 204 No Content
+    }
+
+    public UserDTO createLinks(UserDTO userDTO) {
+        Link selfLink = linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUserById(userDTO.getId())).withSelfRel();
+        Link allUsersLink = linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getAllUsers()).withRel("allUsers");
+
+        userDTO.add(selfLink);
+        userDTO.add(allUsersLink);
+
+        String updateHref = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).updateUser(userDTO.getId(), null)).toUri().toString();
+        String deleteHref = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).deleteUser(userDTO.getId())).toUri().toString();
+        String createHref = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).createUser(userDTO)).toUri().toString();
+
+        userDTO.addAction("update", new Action(updateHref, "PUT", "application/json"));
+        userDTO.addAction("delete", new Action(deleteHref, "DELETE"));
+        userDTO.addAction("create", new Action(createHref, "POST", "application/json"));
+
+        return userDTO;
     }
 }
