@@ -1,9 +1,6 @@
 package com.example.besttest.dtos;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class UserCreatedTestDTO {
+public class UserCreatedTestDTO extends BaseDTO{
 
     private String userId;
     private String testId;
@@ -14,14 +11,6 @@ public class UserCreatedTestDTO {
     }
 
     public UserCreatedTestDTO() {
-    }
-
-    private final Map<String, Action> actions = new HashMap<>();
-    public Map<String, Action> getActions() {
-        return actions;
-    }
-    public void addAction(String rel, Action action) {
-        this.actions.put(rel, action);
     }
 
     public void setUserId(String userId) {

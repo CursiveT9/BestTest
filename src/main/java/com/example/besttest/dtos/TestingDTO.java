@@ -1,10 +1,8 @@
 package com.example.besttest.dtos;
 
 import com.example.besttest.enums.AccessLevel;
-import java.util.HashMap;
-import java.util.Map;
 
-public class TestingDTO {
+public class TestingDTO extends BaseDTO{
 
     private String title;
     private String description;
@@ -25,14 +23,6 @@ public class TestingDTO {
     }
 
     public TestingDTO() {
-    }
-
-    private final Map<String, Action> actions = new HashMap<>();
-    public Map<String, Action> getActions() {
-        return actions;
-    }
-    public void addAction(String rel, Action action) {
-        this.actions.put(rel, action);
     }
 
     public void setTitle(String title) {

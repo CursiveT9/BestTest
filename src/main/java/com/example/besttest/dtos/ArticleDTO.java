@@ -4,15 +4,13 @@ import com.example.besttest.enums.AccessLevel;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ArticleDTO {
+public class ArticleDTO extends BaseDTO {
 
-    private String id;
     private String title;
     private String articlesContentUrl;
     private AccessLevel accessLevel;
 
-    public ArticleDTO(String id, String title, String articlesContentUrl, AccessLevel accessLevel) {
-        this.id = id;
+    public ArticleDTO(String title, String articlesContentUrl, AccessLevel accessLevel) {
         this.title = title;
         this.articlesContentUrl = articlesContentUrl;
         this.accessLevel = accessLevel;
@@ -29,9 +27,6 @@ public class ArticleDTO {
         this.actions.put(rel, action);
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
     public void setTitle(String title) {
         this.title = title;
     }
@@ -42,9 +37,6 @@ public class ArticleDTO {
         this.accessLevel = accessLevel;
     }
 
-    public String getId() {
-        return id;
-    }
     public String getTitle() {
         return title;
     }

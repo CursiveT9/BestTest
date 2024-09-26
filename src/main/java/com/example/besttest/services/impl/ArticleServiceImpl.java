@@ -1,9 +1,7 @@
 package com.example.besttest.services.impl;
 
 import com.example.besttest.dtos.ArticleDTO;
-import com.example.besttest.dtos.TestingDTO;
 import com.example.besttest.models.entities.Article;
-import com.example.besttest.models.entities.Testing;
 import com.example.besttest.repositories.ArticleRepository;
 import com.example.besttest.services.ArticleService;
 import org.modelmapper.ModelMapper;
@@ -26,7 +24,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleDTO createArticle(ArticleDTO articleDTO) {
-        return null;
+        Article article = modelMapper.map(articleDTO, Article.class);
+        Article savedArticle = articleRepository.save(article);
+        return modelMapper.map(savedArticle, ArticleDTO.class);
     }
 
     @Override
@@ -50,6 +50,15 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleDTO editArticle(String id, ArticleDTO articleDTO) {
+        Optional<Article> article = articleRepository.findById(id);
+        if (article.isPresent()) {
+            Article updatedArticle = article.get();
+            updatedArticle.setTitle(articleDTO.getTitle());
+            updatedArticle.setContentUrl(articleDTO.getContentUrl());
+            updatedArticle.setAccessLevel(articleDTO.getAccessLevel());
+            articleRepository.save(updatedArticle);
+            return modelMapper.map(updatedArticle, ArticleDTO.class);
+        }
         return null;
     }
 }

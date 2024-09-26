@@ -1,11 +1,13 @@
 package com.example.besttest.init;
 
+import com.example.besttest.dtos.ArticleDTO;
 import com.example.besttest.dtos.UserDTO;
 import com.example.besttest.dtos.UserRoleDTO;
+import com.example.besttest.enums.AccessLevel;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.User;
-import com.example.besttest.services.UserRoleService;
-import com.example.besttest.services.UserService;
+import com.example.besttest.services.*;
+import com.example.besttest.services.internal.InternalRoleService;
 import com.example.besttest.services.internal.InternalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -24,6 +26,14 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     private InternalUserService internalUserService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private InternalRoleService internalRoleService;
+    @Autowired
+    private ArticleService articleService;
+    @Autowired
+    private TestingServise testingServise;
+    @Autowired
+    private TestSolutionService testSolutionService;
 
     @Transactional
     public void createData() {
@@ -76,12 +86,17 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         userService.deleteUser(user1);
         System.out.println("Deleted User with ID: " + user1);
 
+        // Создание статьи
+        ArticleDTO articleDTO = new ArticleDTO("Title", "Content", AccessLevel.OPEN);
+        ArticleDTO createdArticle = articleService.createArticle(articleDTO);
+
     }
 
     @Override
     public void run(String... args) throws Exception {
 
 //        createData();
+
 
     }
 }

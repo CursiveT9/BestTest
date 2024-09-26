@@ -3,12 +3,11 @@ package com.example.besttest.dtos;
 import com.example.besttest.enums.UserRoleType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.hateoas.RepresentationModel;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserDTO extends RepresentationModel<UserDTO> {
-    private String id;
+public class UserDTO extends BaseDTO {
+
     private String username;
     private String password;
     private String firstName;
@@ -54,9 +53,6 @@ public class UserDTO extends RepresentationModel<UserDTO> {
         this.actions.put(rel, action);
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
     public void setUsername(String username) {
         this.username = username;
     }
@@ -77,9 +73,6 @@ public class UserDTO extends RepresentationModel<UserDTO> {
     }
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-    public String getId() {
-        return id;
     }
     public void setRole(UserRoleType role) {
         this.role = role;
@@ -134,7 +127,6 @@ public class UserDTO extends RepresentationModel<UserDTO> {
     @Override
     public String toString() {
         return "UserDTO{" +
-                "id='" + id + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
