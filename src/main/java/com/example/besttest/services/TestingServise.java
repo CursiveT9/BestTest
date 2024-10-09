@@ -11,4 +11,5 @@ public interface TestingServise {
     TestingDTO getTestingDTOById(String id);
     @Transactional
     TestingDTO editTesting(String id, TestingDTO testingDTO);
+    List<TestingDTO> getTestingsByUserUsername(String username);
 }

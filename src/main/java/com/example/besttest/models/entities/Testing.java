@@ -82,4 +82,18 @@ public class Testing extends TimestampedEntity {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        return "Testing{" +
+                "id" + getId() +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", user=" + user +
+                ", accessLevel=" + accessLevel +
+                ", testContentUrl='" + testContentUrl + '\'' +
+                ", points=" + points +
+                ", article=" + article +
+                '}';
+    }
 }

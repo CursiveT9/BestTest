@@ -1,10 +1,12 @@
 package com.example.besttest.init;
 
 import com.example.besttest.dtos.ArticleDTO;
+import com.example.besttest.dtos.TestingDTO;
 import com.example.besttest.dtos.UserDTO;
 import com.example.besttest.dtos.UserRoleDTO;
 import com.example.besttest.enums.AccessLevel;
 import com.example.besttest.enums.UserRoleType;
+import com.example.besttest.models.entities.Testing;
 import com.example.besttest.models.entities.User;
 import com.example.besttest.services.*;
 import com.example.besttest.services.internal.InternalRoleService;
@@ -90,13 +92,19 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         ArticleDTO articleDTO = new ArticleDTO("Title", "Content", AccessLevel.OPEN);
         ArticleDTO createdArticle = articleService.createArticle(articleDTO);
 
+        List<UserDTO> allUsers1 = userService.getAllUsers();
+        User user11 = internalUserService.getUserById(allUsers1.get(0).getId());
+        TestingDTO createdTest = testingServise.createTesting(new TestingDTO("Title", "Description", user11.getId(), AccessLevel.OPEN, "Content", 100, null));
+        TestingDTO createdTest2 = testingServise.createTesting(new TestingDTO("Title2", "Description", user11.getId(), AccessLevel.OPEN, "Content", 15, null));
+        User user22 = internalUserService.getUserById(allUsers.get(1).getId());
+        TestingDTO createdTest3 = testingServise.createTesting(new TestingDTO("Title3", "Description", user22.getId(), AccessLevel.OPEN, "Content", 25, null));
+
     }
 
     @Override
     public void run(String... args) throws Exception {
 
-//        createData();
-
+        createData();
 
     }
 }

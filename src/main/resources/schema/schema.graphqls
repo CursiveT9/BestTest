@@ -1,8 +1,15 @@
 type Query {
     users(username: String): [User]
+    testingsByUserUsername(username: String!): [Testing]
 }
 
 type User {
     id: ID
     username: String
+}
+
+type Testing {
+    id: ID
+    title: String
+    User: User
 }

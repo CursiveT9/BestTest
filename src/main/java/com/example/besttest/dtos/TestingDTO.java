@@ -1,6 +1,7 @@
 package com.example.besttest.dtos;
 
 import com.example.besttest.enums.AccessLevel;
+import org.jetbrains.annotations.NotNull;
 
 public class TestingDTO extends BaseDTO{
 
@@ -67,5 +68,19 @@ public class TestingDTO extends BaseDTO{
     }
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "TestingDTO{" +
+                "id='" + getId() + '\'' +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", creatorId='" + creatorId + '\'' +
+                ", accessLevel=" + accessLevel +
+                ", testContentUrl='" + testContentUrl + '\'' +
+                ", points=" + points +
+                ", articleId='" + articleId + '\'' +
+                '}';
     }
 }

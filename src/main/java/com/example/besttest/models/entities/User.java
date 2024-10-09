@@ -219,6 +219,7 @@ public class User extends TimestampedEntity {
     @Override
     public String toString() {
         return "User{" +
+                "id=" + getId() +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
