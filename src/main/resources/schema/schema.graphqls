@@ -1,15 +1,15 @@
 type Query {
-    users(username: String): [User]
-    testingsByUserUsername(username: String!): [Testing]
+    users(username: String): [UserDTO]
+    testingsByUserUsername(username: String!): [TestingDTO]
 }
 
-type User {
+type UserDTO {
     id: ID
     username: String
 }
 
-type Testing {
+type TestingDTO {
     id: ID
     title: String
-    User: User
+    creatorId: String
 }

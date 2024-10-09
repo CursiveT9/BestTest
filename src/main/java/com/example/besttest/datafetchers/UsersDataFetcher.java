@@ -1,26 +1,29 @@
 package com.example.besttest.datafetchers;
 
-import com.example.besttest.models.entities.User;
-import com.example.besttest.repositories.UserRepository;
+import com.example.besttest.dtos.UserDTO;
+import com.example.besttest.services.UserService;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsQuery;
 import com.netflix.graphql.dgs.InputArgument;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
-import java.util.Optional;
 
 @DgsComponent
 public class UsersDataFetcher {
+
+    private UserService userService;
+
     @Autowired
-    private UserRepository userRepository;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @DgsQuery
-    public List<User> users(@InputArgument String username) {
+    public List<UserDTO> users(@InputArgument String username) {
         if (username == null) {
-            return userRepository.findAll();
+            return userService.getAllUsers();
         }
-        Optional<User> one = userRepository.findByUsername(username);
-        return one.map(List::of).orElseGet(List::of);
+        UserDTO one = userService.getUserByUsername(username);
+        return List.of(one);
     }
 }
