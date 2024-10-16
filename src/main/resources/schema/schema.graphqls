@@ -3,8 +3,18 @@ type Query {
     testingsByUserUsername(username: String!): [TestingDTO]
 }
 
+type Mutation {
+    createUser(username: String, password: String, firstName: String,
+        lastName: String, isActive: Boolean,imageUrl: String,
+        role: UserRoleType, email: String, points: Int): UserDTO
+    updateUser(id: String, username: String, password: String, firstName: String,
+        lastName: String, isActive: Boolean,imageUrl: String,
+        role: UserRoleType, email: String, points: Int): UserDTO
+    deleteUser(id: String): String
+}
+
 type UserDTO {
-    id: ID
+    id: String
     username: String
 }
 
@@ -12,4 +22,10 @@ type TestingDTO {
     id: ID
     title: String
     creatorId: String
+}
+
+enum UserRoleType {
+    USER,
+    CREATOR,
+    ADMIN
 }
