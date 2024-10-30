@@ -8,6 +8,8 @@ import com.example.besttest.enums.AccessLevel;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.Testing;
 import com.example.besttest.models.entities.User;
+import com.example.besttest.rabbitmq.RabbitMQConfiguration;
+import com.example.besttest.rabbitmq.Receiver;
 import com.example.besttest.services.*;
 import com.example.besttest.services.internal.InternalRoleService;
 import com.example.besttest.services.internal.InternalUserService;
@@ -15,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Component
@@ -36,6 +40,10 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     private TestingServise testingServise;
     @Autowired
     private TestSolutionService testSolutionService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private Receiver receiver;
 
     @Transactional
     public void createData() {
@@ -105,6 +113,9 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         createData();
+        System.out.println("Sending message...");
+        rabbitTemplate.convertAndSend(RabbitMQConfiguration.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
+        receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
     }
 }
