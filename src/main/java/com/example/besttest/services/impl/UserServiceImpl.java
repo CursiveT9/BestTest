@@ -4,6 +4,7 @@ import com.example.besttest.dtos.UserDTO;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.User;
 import com.example.besttest.models.entities.UserRole;
+import com.example.besttest.rabbitmq.Receiver;
 import com.example.besttest.repositories.UserRepository;
 import com.example.besttest.repositories.UserRoleRepository;
 import com.example.besttest.services.UserService;
@@ -12,8 +13,8 @@ import com.example.besttest.services.internal.InternalUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,12 +26,14 @@ public class UserServiceImpl implements UserService, InternalUserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final InternalRoleService internalRoleService;
+    private final RabbitTemplate rabbitTemplate;
 
-    public UserServiceImpl(UserRoleRepository userRoleRepository, UserRepository userRepository, ModelMapper modelMapper, InternalRoleService internalRoleService) {
+    public UserServiceImpl(UserRoleRepository userRoleRepository, UserRepository userRepository, ModelMapper modelMapper, InternalRoleService internalRoleService, Receiver receiver, RabbitTemplate rabbitTemplate) {
         this.userRoleRepository = userRoleRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.internalRoleService = internalRoleService;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -123,6 +126,26 @@ public class UserServiceImpl implements UserService, InternalUserService {
         User updatedUser = userRepository.save(existingUser);
 
         return modelMapper.map(updatedUser, UserDTO.class);
+    }
+
+    public void updateUserScore(String userId, int score) {
+        // Получаем пользователя
+        User user = getUserById(userId);
+        // Обновляем очки пользователя
+        user.setPoints(user.getPoints() + score);
+        editUser(user.getId(), modelMapper.map(user, UserDTO.class));
+        // Формируем сообщение для отправки
+        String message = userId + ":" + score;
+        sendMessageToQueue(message);
+    }
+
+    private void sendMessageToQueue(String message) {
+        try {
+            rabbitTemplate.convertAndSend("spring-boot-exchange", "foo.bar.#", message);
+            System.out.println("Message sent: " + message);
+        } catch (Exception e) {
+            System.err.println("Failed to send message: " + e.getMessage());
+        }
     }
 
 }

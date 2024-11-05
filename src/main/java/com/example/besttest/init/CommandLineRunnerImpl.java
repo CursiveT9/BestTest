@@ -6,11 +6,11 @@ import com.example.besttest.dtos.UserDTO;
 import com.example.besttest.dtos.UserRoleDTO;
 import com.example.besttest.enums.AccessLevel;
 import com.example.besttest.enums.UserRoleType;
-import com.example.besttest.models.entities.Testing;
 import com.example.besttest.models.entities.User;
 import com.example.besttest.rabbitmq.RabbitMQConfiguration;
 import com.example.besttest.rabbitmq.Receiver;
 import com.example.besttest.services.*;
+import com.example.besttest.services.impl.UserServiceImpl;
 import com.example.besttest.services.internal.InternalRoleService;
 import com.example.besttest.services.internal.InternalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
@@ -44,6 +48,8 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private Receiver receiver;
+    @Autowired
+    private UserServiceImpl userServiceImpl;
 
     @Transactional
     public void createData() {
@@ -113,9 +119,19 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         createData();
-        System.out.println("Sending message...");
-        rabbitTemplate.convertAndSend(RabbitMQConfiguration.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
-        receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
+        // Создать пользователя
+        UserDTO testUser = new UserDTO("testUser", "password", "Test", "User", true, "/images/users/testUser.jpg", "testuser@gmail.com", 0);
+        String testUserId = userService.createUser(testUser).getId();
+        System.out.println("Создан тестовый пользователь: " + testUserId);
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        // Запуск отправки сообщения каждые 5 секунд
+        scheduler.scheduleAtFixedRate(() -> {
+            int testScore = 50;
+            userServiceImpl.updateUserScore(testUserId, testScore);
+            System.out.println("Отправлено сообщение для пользователя " + testUserId + " с очками: " + testScore);
+        }, 0, 5, TimeUnit.SECONDS);
     }
 }

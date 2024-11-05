@@ -15,15 +15,20 @@ public class TestSolutionServiceImpl implements TestSolutionService {
 
     private final TestSolutionRepository testSolutionRepository;
     private final ModelMapper modelMapper;
+    private final UserServiceImpl userServiceImpl;
 
-    public TestSolutionServiceImpl(TestSolutionRepository testSolutionRepository, ModelMapper modelMapper) {
+    public TestSolutionServiceImpl(TestSolutionRepository testSolutionRepository, ModelMapper modelMapper, UserServiceImpl userServiceImpl) {
         this.testSolutionRepository = testSolutionRepository;
         this.modelMapper = modelMapper;
+        this.userServiceImpl = userServiceImpl;
     }
 
     @Override
     public TestSolutionDTO createTestSolution(TestSolutionDTO testSolutionDTO) {
-        return null;
+        TestSolution testSolution = modelMapper.map(testSolutionDTO, TestSolution.class);
+        TestSolution savedTestSolution = testSolutionRepository.save(testSolution);
+        sendTestCompletionMessage(savedTestSolution.getUser().getId(), savedTestSolution.getScore());
+        return modelMapper.map(savedTestSolution, TestSolutionDTO.class);
     }
 
     @Override
@@ -48,5 +53,9 @@ public class TestSolutionServiceImpl implements TestSolutionService {
     @Override
     public TestSolutionDTO editTestSolution(String id, TestSolutionDTO testSolutionDTO) {
         return null;
+    }
+
+    public void sendTestCompletionMessage(String userId, int score) {
+        userServiceImpl.updateUserScore(userId, score);
     }
 }

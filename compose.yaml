@@ -1,18 +1,21 @@
+version: '3.8'
+
 services:
   postgres:
-    container_name: prescription_db
+    container_name: best_test_db
     image: postgres:latest
     environment:
-      - POSTGRES_DB=prescriptiondb
-      - POSTGRES_PASSWORD=springpassword
-      - POSTGRES_USER=springuser
+      POSTGRES_DB: best_test_db
+      POSTGRES_USER: springuser
+      POSTGRES_PASSWORD: springpassword
     ports:
-      - 49154:5432
+      - "49154:5432"
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:latest
     environment:
-      - RABBITMQ_DEFAULT_PASS=root
-      - RABBITMQ_DEFAULT_USER=admin
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: root
     ports:
-      - 5672
+      - "5672:5672"
