@@ -1,14 +1,9 @@
 package com.example.besttest.init;
 
-import com.example.besttest.dtos.ArticleDTO;
-import com.example.besttest.dtos.TestingDTO;
-import com.example.besttest.dtos.UserDTO;
-import com.example.besttest.dtos.UserRoleDTO;
+import com.example.besttest.dtos.*;
 import com.example.besttest.enums.AccessLevel;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.User;
-import com.example.besttest.rabbitmq.RabbitMQConfiguration;
-import com.example.besttest.rabbitmq.Receiver;
 import com.example.besttest.services.*;
 import com.example.besttest.services.impl.UserServiceImpl;
 import com.example.besttest.services.internal.InternalRoleService;
@@ -19,12 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
 @Component
@@ -47,8 +36,6 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
-    private Receiver receiver;
-    @Autowired
     private UserServiceImpl userServiceImpl;
 
     @Transactional
@@ -65,7 +52,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         String user6 = userService.createUser(new UserDTO("username8", "password8", "User8", "Doe", false, "userImageUrl8", "sas@gmail.com", 0)).getId();
         String user7 = userService.createUser(new UserDTO("username9", "password9", "User9", "Doe", true, "userImageUrl9", "sas@gmail.com", 0)).getId();
         String user8 = userService.createUser(new UserDTO("username10", "password10", "User10", "Doe", true, "userImageUrl10", "sas@gmail.com", 0)).getId();
-        String admin = userService.createUser(new UserDTO("admin", "admin", "Admin", "Admin", true, "adminImageUrl", UserRoleType.ADMIN, "sas@gmail.com", 0)).getId();
+        String admin = userService.createUser(new UserDTO("admin", "admin", "Admin", "Admin", true, "adminImageUrl", UserRoleType.ADMIN, "sas@gmail.com", 1000)).getId();
 
         // Получение всех пользователей
         List<UserDTO> allUsers = userService.getAllUsers();
@@ -118,20 +105,10 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        createData();
-
-        // Создать пользователя
-        UserDTO testUser = new UserDTO("testUser", "password", "Test", "User", true, "/images/users/testUser.jpg", "testuser@gmail.com", 0);
-        String testUserId = userService.createUser(testUser).getId();
-        System.out.println("Создан тестовый пользователь: " + testUserId);
-
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-        // Запуск отправки сообщения каждые 5 секунд
-        scheduler.scheduleAtFixedRate(() -> {
-            int testScore = 50;
-            userServiceImpl.updateUserScore(testUserId, testScore);
-            System.out.println("Отправлено сообщение для пользователя " + testUserId + " с очками: " + testScore);
-        }, 0, 5, TimeUnit.SECONDS);
+        //createData();
+        List <UserDTO> allUsers = userService.getAllUsers();
+        List <TestingDTO> allTestings = testingServise.getAllTestings();
+        TestSolutionDTO testSolutionDTO = new TestSolutionDTO(allTestings.get(0).getId(), allUsers.get(0).getId(), 1, "sas");
+        testSolutionService.createTestSolution(testSolutionDTO);
     }
 }

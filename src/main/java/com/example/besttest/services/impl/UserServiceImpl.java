@@ -4,7 +4,6 @@ import com.example.besttest.dtos.UserDTO;
 import com.example.besttest.enums.UserRoleType;
 import com.example.besttest.models.entities.User;
 import com.example.besttest.models.entities.UserRole;
-import com.example.besttest.rabbitmq.Receiver;
 import com.example.besttest.repositories.UserRepository;
 import com.example.besttest.repositories.UserRoleRepository;
 import com.example.besttest.services.UserService;
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService, InternalUserService {
     private final InternalRoleService internalRoleService;
     private final RabbitTemplate rabbitTemplate;
 
-    public UserServiceImpl(UserRoleRepository userRoleRepository, UserRepository userRepository, ModelMapper modelMapper, InternalRoleService internalRoleService, Receiver receiver, RabbitTemplate rabbitTemplate) {
+    public UserServiceImpl(UserRoleRepository userRoleRepository, UserRepository userRepository, ModelMapper modelMapper, InternalRoleService internalRoleService, RabbitTemplate rabbitTemplate) {
         this.userRoleRepository = userRoleRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
@@ -129,13 +128,10 @@ public class UserServiceImpl implements UserService, InternalUserService {
     }
 
     public void updateUserScore(String userId, int score) {
-        // Получаем пользователя
         User user = getUserById(userId);
-        // Обновляем очки пользователя
         user.setPoints(user.getPoints() + score);
-        editUser(user.getId(), modelMapper.map(user, UserDTO.class));
-        // Формируем сообщение для отправки
-        String message = userId + ":" + score;
+        userRepository.save(user);
+        String message = userId + ":" + user.getPoints();
         sendMessageToQueue(message);
     }
 
