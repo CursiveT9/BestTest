@@ -3,6 +3,7 @@ package com.example.besttest.dtos;
 import com.example.besttest.enums.UserRoleType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,19 +85,23 @@ public class UserDTO extends BaseDTO {
         this.points = points;
     }
 
-    @NotBlank(message = "Username name cannot be blank")
+    @NotBlank(message = "Username is mandatory")
+    @Size(min = 2, max = 30, message = "Username must be between 2 and 30 characters")
     public String getUsername() {
         return username;
     }
-    @NotBlank(message = "Password cannot be blank")
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 8, max = 30, message = "Password must be between 8 and 30 characters")
     public String getPassword() {
         return password;
     }
-    @NotBlank(message = "First name cannot be blank")
+    @NotBlank(message = "First name is mandatory")
+    @Size(max = 20, message = "First name must be less than 20 characters")
     public String getFirstName() {
         return firstName;
     }
-    @NotBlank(message = "Last name cannot be blank")
+    @NotBlank(message = "Last name is mandatory")
+    @Size(max = 20, message = "Last name must be less than 20 characters")
     public String getLastName() {
         return lastName;
     }
@@ -107,7 +112,7 @@ public class UserDTO extends BaseDTO {
     public Boolean getIsActive() {
         return isActive;
     }
-    @NotBlank(message = "Image URL cannot be blank")
+    @NotBlank(message = "Image URL is mandatory")
     public String getImageUrl() {
         return imageUrl;
     }
