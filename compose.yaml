@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: springuser
       POSTGRES_PASSWORD: springpassword
     ports:
-      - "49154:5432"
+      - "58444:5432"
 
   rabbitmq:
     container_name: rabbitmq

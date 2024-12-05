@@ -31,7 +31,8 @@ public class UserController implements UserApi {
     @PostMapping
     public ResponseEntity<UserDTOApi> createUser(@RequestBody UserDTOApi userDTOApi) {
         UserDTO userDTO = new UserDTO(userDTOApi.getUsername(), userDTOApi.getPassword(), userDTOApi.getFirstName(), userDTOApi.getLastName(), userDTOApi.getIsActive(), userDTOApi.getImageUrl(), UserRoleType.valueOf(userDTOApi.getRole().name()), userDTOApi.getEmail(), userDTOApi.getPoints());
-        userDTOApi = new UserDTOApi(userDTO.getUsername(), userDTO.getPassword(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getIsActive(), userDTO.getImageUrl(), UserRoleTypeApi.valueOf(userDTO.getRole().name()), userDTO.getEmail(), userDTO.getPoints());
+        UserDTO createdUser = userService.createUser(userDTO);
+        userDTOApi = new UserDTOApi(createdUser.getId(), createdUser.getUsername(), createdUser.getPassword(), createdUser.getFirstName(), createdUser.getLastName(), createdUser.getIsActive(), createdUser.getImageUrl(), UserRoleTypeApi.valueOf(createdUser.getRole().name()), createdUser.getEmail(), createdUser.getPoints());
         userDTOApi = createLinks(userDTOApi);
         return ResponseEntity.ok(userDTOApi);
     }
@@ -40,7 +41,10 @@ public class UserController implements UserApi {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTOApi> getUserById (@PathVariable String id) {
         UserDTO userDTO = userService.getUserDTOById(id);
-        UserDTOApi userDTOApi = new UserDTOApi(userDTO.getUsername(), userDTO.getPassword(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getIsActive(), userDTO.getImageUrl(), UserRoleTypeApi.valueOf(userDTO.getRole().name()), userDTO.getEmail(), userDTO.getPoints());
+        if (userDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        UserDTOApi userDTOApi = new UserDTOApi(userDTO.getId(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getIsActive(), userDTO.getImageUrl(), UserRoleTypeApi.valueOf(userDTO.getRole().name()), userDTO.getEmail(), userDTO.getPoints());
         userDTOApi = createLinks(userDTOApi);
         return ResponseEntity.ok(userDTOApi);
     }
@@ -49,9 +53,12 @@ public class UserController implements UserApi {
     @GetMapping
     public ResponseEntity<List<UserDTOApi>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
+        if (List.of(users).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         List<UserDTOApi> userDTOApis = users.stream()
                 .map(user -> {
-                    UserDTOApi userDTOApi = new UserDTOApi(user.getUsername(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getIsActive(), user.getImageUrl(), UserRoleTypeApi.valueOf(user.getRole().name()), user.getEmail(), user.getPoints());
+                    UserDTOApi userDTOApi = new UserDTOApi(user.getId(), user.getUsername(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getIsActive(), user.getImageUrl(), UserRoleTypeApi.valueOf(user.getRole().name()), user.getEmail(), user.getPoints());
                     userDTOApi = createLinks(userDTOApi);
                     return userDTOApi;
                 })
@@ -64,7 +71,10 @@ public class UserController implements UserApi {
     public ResponseEntity<UserDTOApi> updateUser(@PathVariable String id, @RequestBody UserDTOApi userDTOApi) {
         UserDTO userDTO = new UserDTO(userDTOApi.getUsername(), userDTOApi.getPassword(), userDTOApi.getFirstName(), userDTOApi.getLastName(), userDTOApi.getIsActive(), userDTOApi.getImageUrl(), UserRoleType.valueOf(userDTOApi.getRole().name()), userDTOApi.getEmail(), userDTOApi.getPoints());
         UserDTO updatedUser = userService.editUser(id, userDTO);
-        userDTOApi = new UserDTOApi(updatedUser.getUsername(), updatedUser.getPassword(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getIsActive(), updatedUser.getImageUrl(), UserRoleTypeApi.valueOf(updatedUser.getRole().name()), updatedUser.getEmail(), updatedUser.getPoints());
+        if (updatedUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        userDTOApi = new UserDTOApi(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getPassword(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getIsActive(), updatedUser.getImageUrl(), UserRoleTypeApi.valueOf(updatedUser.getRole().name()), updatedUser.getEmail(), updatedUser.getPoints());
         userDTOApi = createLinks(userDTOApi);
         return ResponseEntity.ok(userDTOApi);
     }
@@ -83,7 +93,7 @@ public class UserController implements UserApi {
         userDTO.add(selfLink);
         userDTO.add(allUsersLink);
 
-        String updateHref = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).updateUser(userDTO.getId(), null)).toUri().toString();
+        String updateHref = linkTo(WebMvcLinkBuilder.methodOn(UserController.class).updateUser(userDTO.getId(), userDTO)).toUri().toString();
         String deleteHref = linkTo(WebMvcLinkBuilder.methodOn(UserController.class).deleteUser(userDTO.getId())).toUri().toString();
         String createHref = linkTo(WebMvcLinkBuilder.methodOn(UserController.class).createUser(userDTO)).toUri().toString();
 

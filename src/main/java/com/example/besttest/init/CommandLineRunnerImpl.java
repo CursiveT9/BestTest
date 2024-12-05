@@ -100,15 +100,16 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         User user22 = internalUserService.getUserById(allUsers.get(1).getId());
         TestingDTO createdTest3 = testingServise.createTesting(new TestingDTO("Title3", "Description", user22.getId(), AccessLevel.OPEN, "Content", 25, null));
 
+        List <UserDTO> allUsers11 = userService.getAllUsers();
+        List <TestingDTO> allTestings = testingServise.getAllTestings();
+        TestSolutionDTO testSolutionDTO = new TestSolutionDTO(allTestings.get(0).getId(), allUsers11.get(0).getId(), 1, "sas");
+        testSolutionService.createTestSolution(testSolutionDTO);
     }
 
     @Override
     public void run(String... args) throws Exception {
 
-        //createData();
-        List <UserDTO> allUsers = userService.getAllUsers();
-        List <TestingDTO> allTestings = testingServise.getAllTestings();
-        TestSolutionDTO testSolutionDTO = new TestSolutionDTO(allTestings.get(0).getId(), allUsers.get(0).getId(), 1, "sas");
-        testSolutionService.createTestSolution(testSolutionDTO);
+        createData();
+
     }
 }
