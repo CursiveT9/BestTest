@@ -4,8 +4,6 @@ import com.example.besttestapi.enums.UserRoleTypeApi;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.hateoas.Link;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +18,19 @@ public class UserDTOApi extends BaseDTOApi{
         private UserRoleTypeApi role;
         private String email;
         private int points;
+
+        public UserDTOApi(String id,String username, String password, String firstName, String lastName, Boolean isActive, String imageUrl, UserRoleTypeApi role, String email, int points) {
+                super(id);
+                this.username = username;
+                this.password = password;
+                this.firstName = firstName;
+                this.lastName = lastName;
+                this.isActive = isActive;
+                this.imageUrl = imageUrl;
+                this.role = role;
+                this.email = email;
+                this.points = points;
+        }
 
         public UserDTOApi(String username, String password, String firstName, String lastName, Boolean isActive, String imageUrl, UserRoleTypeApi role, String email, int points) {
                 this.username = username;
