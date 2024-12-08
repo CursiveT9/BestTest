@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/users")
 public interface UserApi {
 
-    @Operation(summary = "Создать пользователя")
+    @Operation(summary = "Создать пользователя sas")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<UserDTOApi> createUser(@RequestBody UserDTOApi userDTO);
 
